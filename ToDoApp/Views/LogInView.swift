@@ -8,35 +8,50 @@
 import SwiftUI
 
 struct LogInView: View {
-    var body: some View {
-        VStack{
-            //a header
-            ZStack{
-                RoundedRectangle(cornerRadius: 0)
-                    .foregroundColor(Color.pink)
-                    .rotationEffect(Angle(degrees: 15))
-                
-                VStack{
-                    Text("To Do List")
-                        .font(.system(size: 50))
-                        .foregroundColor(.white)
-                        .bold()
-                    
-                    Text("Get Things Done")
-                        .foregroundColor(.white)
-                        .font(.system(size: 30))
-                }.padding(.top, 10)
+    @StateObject var viewModel = LogInViewModel()
     
-            }.frame(width: UIScreen.main.bounds.width * 3,
-                    height: 300)
-            .offset(y:-100)
-            
-            
-            //log in from
-            
-            //create account
-            Spacer()
+    var body: some View {
+        NavigationView{
+            VStack{
+                //a header
+                HeaderView(tittle: "To Do List", subTittle: "Get things Done", angle: 15, backgroundColor: .pink)
+                //log in from
+                Form{
+                    //error message display
+                    if !viewModel.errorMessage.isEmpty {
+                        Text(viewModel.errorMessage)
+                            .foregroundColor(.red)
+                    }
+                    
+                    TextField("Email Address",text:$viewModel.email)
+                        .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+                        .autocorrectionDisabled()
+                        .keyboardType(.emailAddress)
+
+                    // .textFieldStyle(RoundedBorderTextFieldStyle())
+                    SecureField("Password", text: $viewModel.password)
+                    //  .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                        .padding(.bottom, 20)
+                    
+                    TlButton(
+                        title: "Log In",
+                        backgroundColor: .blue){
+                            //attempt login
+                            viewModel.logIn()
+                        }.padding()
+                    
+                }.offset(y:-60)
+                //create account
+                VStack{
+                    Text("New around here?")
+                    NavigationLink("Create an account", destination: RegisterView())
+                }
+                .padding(.bottom, 50)
+                Spacer()
+            }
         }
+        
     }
 }
 
